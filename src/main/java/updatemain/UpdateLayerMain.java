@@ -145,7 +145,7 @@ public class UpdateLayerMain {
                 }
             }
             System.out.println("updateList : " + mUpdateList.toString());
-            // call updater
+            // call update
             updateSpotCount();
 
         } catch (JSONException e) {
