@@ -22,15 +22,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class UpdateLayerMain {
 
     public static void main(String[] args) {
-        // TODO 自動生成されたメソッド・スタブ
 
         UpdateLayerMain ulm = new UpdateLayerMain();
         ulm.collectionPoint();
 
-//        for(int i = 1; i < 48;i++){
-//            ulm.getResasData(String.format("%02d", i));
-//        }
-      ulm.getResasData(String.format("07"));
+        for(int i = 1; i < 48;i++){
+            ulm.getResasData(String.format("%02d", i));
+        }
+        // 福島県はデータなし
+//        ulm.getResasData(String.format("07"));
 
     }
 
@@ -39,13 +39,8 @@ public class UpdateLayerMain {
      * */
     static String mAttributes = "attributes";
     static String mFeatures = "features";
-
-//    static String mFaturePeople = "future_p";
     static String mP_NUMF2040 = "P_NUM_F2040";
     static String mValue = "value";
-
-
-
 
     /** polygonリスト */
     static Map<String,JSONObject> mPolygonList;
@@ -53,24 +48,13 @@ public class UpdateLayerMain {
     static ArrayList<JSONObject> mUpdateList;
 
     /** REST */
-//    http://services7.arcgis.com/903opF9LxIC4unCH/arcgis/rest/services/%E9%83%BD%E9%81%93%E5%BA%9C%E7%9C%8C%E3%83%87%E3%83%BC%E3%82%BF/FeatureServer/0/query
-//    // 更新レコード取得(広島県のポリゴン情報)
-//    static String mCollectPolugonsReq = "http://services.arcgis.com/wlVTGRSYTzAbjjiC/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_hirosima_polygon/FeatureServer/0/query";
-//    // 広島県の将来人口推計
-//    static String mResasRequest = "https://opendata.resas-portal.go.jp/api/v1-rc.1/population/future/cities";
-//    // 更新レコード取得(広島県のポリゴン情報)
-//    static String mCollectPolyUpdate = "http://services.arcgis.com/wlVTGRSYTzAbjjiC/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_hirosima_polygon/FeatureServer/0/applyEdits";
+    // 更新レコード取得(全国のポリゴン情報)
+    static String mCollectPolugonsReq = "http://services7.arcgis.com/903opF9LxIC4unCH/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_allJapanSatowaka/FeatureServer/0/query";
+    // 全国の将来人口推計
+    static String mResasRequest = "https://opendata.resas-portal.go.jp/api/v1-rc.1/population/future/cities";
+    // 更新レコード取得(全国のポリゴン情報)
+    static String mCollectPolyUpdate = "http://services7.arcgis.com/903opF9LxIC4unCH/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_allJapanSatowaka/FeatureServer/0/applyEdits";
 
-        // 更新レコード取得(広島県のポリゴン情報)
-        static String mCollectPolugonsReq = "http://services7.arcgis.com/903opF9LxIC4unCH/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_allJapanSatowaka/FeatureServer/0/query";
-//        static String mCollectPolugonsReq = "http://services.arcgis.com/wlVTGRSYTzAbjjiC/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_hirosima_polygon/FeatureServer/0/query";
-        // 広島県の将来人口推計
-        static String mResasRequest = "https://opendata.resas-portal.go.jp/api/v1-rc.1/population/future/cities";
-        // 更新レコード取得(広島県のポリゴン情報)
-        static String mCollectPolyUpdate = "http://services7.arcgis.com/903opF9LxIC4unCH/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_allJapanSatowaka/FeatureServer/0/applyEdits";
-//        static String mCollectPolyUpdate = "http://services.arcgis.com/wlVTGRSYTzAbjjiC/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_hirosima_polygon/FeatureServer/0/applyEdits";
-
-    // 更新したいArcGISのレイヤーをもってくる
     /**
      * polygon一覧を取得する
      * */
@@ -145,9 +129,7 @@ public class UpdateLayerMain {
 
     // 更新情報(List)を作成する
     private void makeUpdateList(JSONObject pResasResut){
-        // citycode = JCODE
         mUpdateList = new ArrayList<JSONObject>();
-
 
         try {
             JSONArray resasResult =  pResasResut.getJSONObject("result").getJSONArray("cities");
@@ -172,7 +154,7 @@ public class UpdateLayerMain {
 
 
     }
-    // Arc を更新する。
+    // ArcGISを更新する。
     /**
      * 更新する
      * */
@@ -251,15 +233,6 @@ public class UpdateLayerMain {
      * */
     private JSONObject getRequest(String pStringUrl, String pRequestJson){
 
-
-      // レイヤーに定義されているすべてのレコードを取得する
-      /////////////////////////////////////
-      // pStringUrlにはこのURLが入ってきます
-      // http://services.arcgis.com/wlVTGRSYTzAbjjiC/arcgis/rest/services/%E5%85%A8%E5%9B%BD%E5%B8%82%E5%8C%BA%E7%94%BA%E6%9D%91%E7%95%8C%E3%83%87%E3%83%BC%E3%82%BF_hirosima_polygon/FeatureServer/0/query";
-      // pRequestJsonにはこのパラメータが入ってきます:すべての場合はwhere=(1=1)を必ず設定する
-      // where=(1=1)&outFields=JCODE,FID&f=json&returnGeometry=false
-      /////////////////////////////////////
-
       HttpURLConnection con = null;
       String buffer = "";
       OutputStream os = null;
@@ -294,7 +267,6 @@ public class UpdateLayerMain {
                   String responseStr = buffer;
                   response = new JSONObject(buffer);
                   System.out.println("Response:" + responseStr);
-                  // TODO stringからJsonオブジェクトに変換する。
                   return response;
               case HttpURLConnection.HTTP_UNAUTHORIZED:
                   break;
@@ -321,7 +293,5 @@ public class UpdateLayerMain {
       }
       return response;
     }
-
-
 
 }
